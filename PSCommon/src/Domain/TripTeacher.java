@@ -17,6 +17,7 @@ public class TripTeacher implements GenericEntity {
     public TripTeacher(Long tripID, Long teacherID) {
         this.tripID = tripID;
         this.teacherID = teacherID;
+        //System.out.println("Instance of TripTeacher created! teacherID = " + this.teacherID + " | tripID = " + this.tripID);
     }
 
     @Override

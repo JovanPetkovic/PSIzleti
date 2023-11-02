@@ -17,6 +17,7 @@ import Domain.Teacher;
 import Domain.Trip;
 import Domain.TripStudent;
 import Domain.TripTeacher;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -226,8 +227,15 @@ public class FrmAddTrip extends javax.swing.JFrame {
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
 
         saveTripBase();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
+        }
         saveTripTeachers();
         saveTripStudents();
+        JOptionPane.showMessageDialog(this, "Trip Successfully Added");
+        this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addTeacherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTeacherButtonActionPerformed

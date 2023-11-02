@@ -38,6 +38,7 @@ public class TripStudent implements GenericEntity {
     public TripStudent(Long tripID, Long studentID) {
         this.tripID = tripID;
         this.studentID = studentID;
+        //System.out.println("Instance of TripStudent created! studentID = " + this.studentID + " | tripID = " + this.tripID);
     }
 
     public TripStudent() {

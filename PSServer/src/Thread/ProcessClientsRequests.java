@@ -53,60 +53,60 @@ public class ProcessClientsRequests extends Thread {
                             break;
                         case ADD_TEACHER:
                             Teacher teacherInsert = (Teacher) request.getArgument();
-                            Controller.getInstance().add(teacherInsert);
+                            Controller.getInstance().addTeacher(teacherInsert);
                             response.setResult(teacherInsert);
                             break;
                         case ADD_STUDENT:
                             Student studentInsert = (Student) request.getArgument();
-                            Controller.getInstance().add(studentInsert);
+                            Controller.getInstance().addStudent(studentInsert);
                             response.setResult(studentInsert);
                             break;
                         case ADD_TRIP:
                             Trip tripInsert = (Trip) request.getArgument();
-                            Controller.getInstance().add(tripInsert);
+                            Controller.getInstance().addTrip(tripInsert);
                             break;
                         case ADD_TRIPTEACHER:
                             TripTeacher tt = (TripTeacher) request.getArgument();
-                            Controller.getInstance().add(tt);
+                            Controller.getInstance().addTripTeacher(tt);
                             break;
                         case ADD_TRIPSTUDENT:
                             TripStudent ts = (TripStudent) request.getArgument();
-                            Controller.getInstance().add(ts);
+                            Controller.getInstance().addTripStudent(ts);
                             break;
                         case GET_ALL_TEACHERS:
-                            response.setResult(Controller.getInstance().getAll(new Teacher()));
+                            response.setResult(Controller.getInstance().getAllTeachers());
                             break;
                         case GET_ALL_STUDENTS:
-                            response.setResult(Controller.getInstance().getAll(new Student()));
+                            response.setResult(Controller.getInstance().getAllStudents());
                             break;
                         case GET_ALL_TRIPTEACHERS:
-                            response.setResult(Controller.getInstance().getAll(new TripTeacher()));
+                            response.setResult(Controller.getInstance().getAllTripTeachers());
                             break;
                         case GET_ALL_TRIPSTUDENTS:
-                            response.setResult(Controller.getInstance().getAll(new TripStudent()));
+                            response.setResult(Controller.getInstance().getAllTripStudents());
                             break;    
                         case GET_ALL_TRIPS:
-                            response.setResult(Controller.getInstance().getAll(new Trip()));
+                            response.setResult(Controller.getInstance().getAllTrips());
                             break;
                         case EDIT_TEACHER:
                             Teacher teacherEdit = (Teacher) request.getArgument();
-                            Controller.getInstance().edit(teacherEdit);
+                            Controller.getInstance().editTeacher(teacherEdit);
                             break;
                         case EDIT_STUDENT:
                             Student studentEdit = (Student) request.getArgument();
-                            Controller.getInstance().edit(studentEdit);
+                            Controller.getInstance().editStudent(studentEdit);
                             break;
                         case EDIT_TRIP:
                             Trip tripEdit = (Trip) request.getArgument();
-                            Controller.getInstance().edit(tripEdit);
+                            Controller.getInstance().editTrip(tripEdit);
                             break;
                         case DELETE_TRIPTEACHER:
                             TripTeacher tripT = (TripTeacher) request.getArgument();
-                            Controller.getInstance().delete(tripT);
+                            Controller.getInstance().deleteTripTeacher(tripT);
                             break;
                         case DELETE_TRIPSTUDENT:
                             TripStudent tripS = (TripStudent) request.getArgument();
-                            Controller.getInstance().delete(tripS);
+                            Controller.getInstance().deleteTripStudent(tripS);
                             break;
                     }
                 } catch (Exception e) {

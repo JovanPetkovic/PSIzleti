@@ -113,7 +113,6 @@ public class FrmLogin extends javax.swing.JFrame {
             validateForm(username, password);
 
             User user = Communication.getInstance().login(username, password);
-            System.out.println(user.toString());
             JOptionPane.showMessageDialog(this, "Login success. Welcome " + user.getUsername());
             (new FrmMain(user.getFirstname(),user.getLastname())).setVisible(true);
             this.dispose();

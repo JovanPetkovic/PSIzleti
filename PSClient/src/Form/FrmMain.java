@@ -1,5 +1,11 @@
 package Form;
 
+import Form.Student.FrmAddStudent;
+import Form.Student.FrmAllStudent;
+import Form.Teacher.FrmAddTeacher;
+import Form.Teacher.FrmAllTeacher;
+import Form.Trip.FrmAddTrip;
+import Form.Trip.FrmAllTrip;
 import java.awt.event.ActionListener;
 import java.net.Socket;
 import javax.swing.JFrame;

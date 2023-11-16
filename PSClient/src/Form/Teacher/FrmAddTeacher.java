@@ -8,8 +8,11 @@ import Form.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Communication.Communication;
+import Domain.School;
 import Domain.Teacher;
+import java.util.List;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,11 +22,14 @@ import javax.swing.JOptionPane;
 public class FrmAddTeacher extends javax.swing.JFrame {
 
     Teacher teacher;
-    
+    List<School> schoolList;
     
     public FrmAddTeacher() {
-        super("Add a new teacher");
+        super("Dodaj nastavnika");
+        teacher = new Teacher();
         initComponents();
+        initData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         teacher = new Teacher();
     }
 
@@ -42,6 +48,10 @@ public class FrmAddTeacher extends javax.swing.JFrame {
         firstNameField = new javax.swing.JTextField();
         lastNameField = new javax.swing.JTextField();
         addButton1 = new javax.swing.JButton();
+        schoolField = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        jmbgField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -63,26 +73,36 @@ public class FrmAddTeacher extends javax.swing.JFrame {
             }
         });
 
+        schoolField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel3.setText("Škola:");
+
+        jLabel4.setText("JMBG:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(43, 43, 43)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(firstNameField)
-                    .addComponent(lastNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jmbgField)
+                            .addComponent(firstNameField)
+                            .addComponent(lastNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                            .addComponent(schoolField, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(47, 47, 47))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addComponent(addButton)
-                .addGap(18, 18, 18)
-                .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -95,11 +115,19 @@ public class FrmAddTeacher extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(schoolField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jmbgField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
                     .addComponent(addButton1))
-                .addGap(27, 27, 27))
+                .addGap(19, 19, 19))
         );
 
         pack();
@@ -113,15 +141,13 @@ public class FrmAddTeacher extends javax.swing.JFrame {
             String firstName = firstNameField.getText();
             String lastName = lastNameField.getText();
 
-
-
             teacher.setFirstName(firstName);
             teacher.setLastName(lastName);
-
+            teacher.setJmbg(jmbgField.getText());
+            teacher.setSchool(schoolList.get(schoolField.getSelectedIndex()));
             try {
                 Communication.getInstance().addTeacher(teacher);
-                JOptionPane.showMessageDialog(this, "Sistem je zapamtio nastavnika.");
-                
+                JOptionPane.showMessageDialog(this, "Nastavnik je uspešno upamćen.");
             } catch (Exception ex) {
                 Logger.getLogger(FrmChangeTeacher.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -183,7 +209,11 @@ public class FrmAddTeacher extends javax.swing.JFrame {
     private javax.swing.JTextField firstNameField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField jmbgField;
     private javax.swing.JTextField lastNameField;
+    private javax.swing.JComboBox<String> schoolField;
     // End of variables declaration//GEN-END:variables
 
     private String validateData() {
@@ -201,5 +231,17 @@ public class FrmAddTeacher extends javax.swing.JFrame {
             errorMessage += "Prezime ne sme sadrzati brojeve i specijalne znakove\n";
         }
         return errorMessage;
+    }
+    
+    
+    public void initData(){
+        try {
+            schoolList = Communication.getInstance().getAllSchools();
+            for(School school:schoolList){
+                schoolField.addItem(school.getName());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAddTeacher.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

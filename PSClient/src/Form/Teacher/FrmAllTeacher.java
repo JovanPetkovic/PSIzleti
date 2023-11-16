@@ -4,14 +4,15 @@
  */
 package Form.Teacher;
 
-import Form.*;
-import static java.lang.Thread.sleep;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
+import Domain.School;
 import Domain.Teacher;
+import javax.swing.JFrame;
 
 /**
  *
@@ -22,14 +23,15 @@ public class FrmAllTeacher extends javax.swing.JFrame {
     
     DefaultTableModel dtm;
     List<Teacher> teacherList;
-    
+    List<School> schoolList;
     /**
      * Creates new form FrmAllTeacher
      */
     public FrmAllTeacher() {
         initComponents();
+        initData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dtm = (DefaultTableModel) teacherTable.getModel();
-        refreshData();
     }
 
     /**
@@ -41,48 +43,54 @@ public class FrmAllTeacher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        teacherTable = new javax.swing.JTable();
-        changeButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        searchButton = new javax.swing.JButton();
         firstNameField = new javax.swing.JTextField();
         lastNameField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        teacherTable = new javax.swing.JTable();
+        schoolField = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        showAllButton = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
+        changeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        teacherTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {},
-            new String [] {
-                "ID", "Ime", "Prezime"
-            }
-        ));
-        jScrollPane1.setViewportView(teacherTable);
-
-        changeButton.setText("Izmeni");
-        changeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeButtonActionPerformed(evt);
-            }
-        });
 
         jLabel1.setText("Ime:");
 
         jLabel2.setText("Prezime:");
 
-        searchButton.setText("Pretrazi");
+        teacherTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {},
+            new String [] {
+                "Ime", "Prezime"
+            }
+        ));
+        jScrollPane1.setViewportView(teacherTable);
+
+        schoolField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel3.setText("Škola:");
+
+        showAllButton.setText("Prikaži Sve");
+        showAllButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showAllButtonMouseClicked(evt);
+            }
+        });
+
+        searchButton.setText("Pretraži");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Nazad");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        changeButton.setText("Izmeni");
+        changeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                changeButtonMouseClicked(evt);
             }
         });
 
@@ -90,70 +98,103 @@ public class FrmAllTeacher extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
+                                .addComponent(jLabel1)
+                                .addGap(41, 41, 41))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel3)
                                     .addComponent(jLabel2))
-                                .addGap(19, 19, 19)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lastNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                                    .addComponent(firstNameField)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(154, 154, 154)
-                                .addComponent(searchButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(89, 89, 89)
-                                .addComponent(changeButton)
-                                .addGap(57, 57, 57)
-                                .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                                .addGap(18, 18, 18)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(firstNameField)
+                            .addComponent(lastNameField)
+                            .addComponent(schoolField, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(searchButton)
+                        .addGap(31, 31, 31)
+                        .addComponent(showAllButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(changeButton)
+                .addGap(130, 130, 130))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addComponent(searchButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(changeButton)
-                    .addComponent(jButton1))
-                .addGap(19, 19, 19))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(schoolField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(searchButton)
+                            .addComponent(showAllButton))
+                        .addGap(64, 64, 64)))
+                .addComponent(changeButton)
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-        Teacher selectedTeacher = teacherList.get(teacherTable.getSelectedRow());
-        (new FrmChangeTeacher(selectedTeacher)).setVisible(true);
-    }//GEN-LAST:event_changeButtonActionPerformed
+    private void showAllButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAllButtonMouseClicked
+        try {
+            teacherList = Communication.getInstance().getAllTeachers();
+            fillTeacherTable();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllTeacher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_showAllButtonMouseClicked
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        Teacher findParam = new Teacher();
+        findParam.setFirstName(firstNameField.getText());
+        findParam.setLastName(lastNameField.getText());
+        findParam.setSchool(schoolList.get(schoolField.getSelectedIndex()));
+        try {
+            teacherList = Communication.getInstance().findTeachers(findParam);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllTeacher.class.getName()).log(Level.SEVERE, null, ex);
+        }
         fillTeacherTable();
     }//GEN-LAST:event_searchButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void changeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changeButtonMouseClicked
+        try {
+            Teacher teacher = teacherList.get(teacherTable.getSelectedRow());
+            Teacher changeTeacher = Communication.getInstance().getTeacher(teacher);
+            System.out.println(changeTeacher.toString());
+            changeTeacher.setSchool(Communication.getInstance().getSchool(changeTeacher.getSchool()));
+            (new FrmChangeTeacher(changeTeacher)).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllTeacher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_changeButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -194,35 +235,21 @@ public class FrmAllTeacher extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton changeButton;
     private javax.swing.JTextField firstNameField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lastNameField;
+    private javax.swing.JComboBox<String> schoolField;
     private javax.swing.JButton searchButton;
+    private javax.swing.JButton showAllButton;
     private javax.swing.JTable teacherTable;
     // End of variables declaration//GEN-END:variables
 
     private void fillTeacherTable() {
-        try {
-            teacherList = Communication.getInstance().getAllTeachers();
-        } catch (Exception ex) {
-            Logger.getLogger(FrmAllTeacher.class.getName()).log(Level.SEVERE, null, ex);
-        }
         cleanTable();
-        String firstName = firstNameField.getText().toLowerCase();
-        String lastName = lastNameField.getText().toLowerCase();
         for(Teacher teacher:teacherList){
-            boolean found = true;
-            if(!firstName.isEmpty()){
-                found = teacher.getFirstName().toLowerCase().contains(firstName);
-            }
-            if(!lastName.isEmpty()){
-                found = teacher.getLastName().toLowerCase().contains(lastName);
-            }
-            if(found){
-                dtm.addRow(new Object[]{teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
-            }
+            dtm.addRow(new Object[]{teacher.getFirstName(),teacher.getLastName()});
         }
     }
 
@@ -233,30 +260,13 @@ public class FrmAllTeacher extends javax.swing.JFrame {
         }
     }
 
-    private void refreshData() {
-        RefreshThread rfThread = new RefreshThread(this);
-        rfThread.start();
-    }
-    
-    private class RefreshThread extends Thread{
-        
-        private FrmAllTeacher teacherForm;
-        
-        public RefreshThread(FrmAllTeacher fat){
-            teacherForm = fat;
+    private void initData() {
+        try {
+            schoolList = Communication.getInstance().getAllSchools();
+            for(School school:schoolList)
+                schoolField.addItem(school.getName());
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(FrmAllTeacher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
-        @Override
-        public void run(){
-            for(int i=1;i>0;i++){
-                try {
-                    teacherForm.fillTeacherTable();           
-                    sleep(5000);
-                } catch (InterruptedException ex) {
-                    java.util.logging.Logger.getLogger(FrmAllTeacher.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
     }
 }

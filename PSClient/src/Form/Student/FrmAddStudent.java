@@ -7,7 +7,11 @@ package Form.Student;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Communication.Communication;
+import Domain.School;
 import Domain.Student;
+import java.util.List;
+import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -17,15 +21,19 @@ import javax.swing.JOptionPane;
 public class FrmAddStudent extends javax.swing.JFrame {
 
     Student student;
+    List<School> schoolList;
     
     /**
      * Creates new form FrmStudent
      */
     public FrmAddStudent() {
-        super("Add Student");
+        super("Dodaj Učenika");
         student = new Student();
         initComponents();
+        initData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,11 +47,14 @@ public class FrmAddStudent extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        gradeField = new javax.swing.JTextField();
         lastNameField = new javax.swing.JTextField();
         firstNameField = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        gradeField = new javax.swing.JComboBox<Integer>();
+        gradeField.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8 }));
+        jLabel4 = new javax.swing.JLabel();
+        schoolField = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -53,7 +64,7 @@ public class FrmAddStudent extends javax.swing.JFrame {
 
         jLabel3.setText("Razred:");
 
-        addButton.setText("Dodaj ucenika");
+        addButton.setText("Dodaj učenika");
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
@@ -67,34 +78,40 @@ public class FrmAddStudent extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Škola:");
+
+        schoolField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(addButton)
-                        .addGap(29, 29, 29)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(gradeField, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lastNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                            .addComponent(firstNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                            .addComponent(gradeField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(schoolField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(addButton)
+                        .addGap(28, 28, 28)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(70, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -106,11 +123,15 @@ public class FrmAddStudent extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(gradeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(schoolField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
                     .addComponent(jButton1))
-                .addGap(34, 34, 34))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
@@ -122,18 +143,17 @@ public class FrmAddStudent extends javax.swing.JFrame {
         
         if(errorMessage.isEmpty()){
 
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            int grade = Integer.parseInt(gradeField.getText());
-            student.setFirstName(firstName);
-            student.setLastName(lastName);
-            student.setGrade(grade);
+            student.setFirstName(firstNameField.getText());
+            student.setLastName(lastNameField.getText());
+            student.setGrade((int) gradeField.getSelectedItem());
+            student.setSchool(schoolList.get(schoolField.getSelectedIndex()));
 
             try {
                 Communication.getInstance().addStudent(student);
-                JOptionPane.showMessageDialog(this, "Sistem je zapamtio ucenika.");
+                JOptionPane.showMessageDialog(this, "Sistem je zapamtio učenika");
             } catch (Exception ex) {
                 Logger.getLogger(FrmAddStudent.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Sistem ne može da zapamti učenika");
             }
         } else {
             JOptionPane.showMessageDialog(this, errorMessage);
@@ -190,28 +210,38 @@ public class FrmAddStudent extends javax.swing.JFrame {
         }
         if(lastNameField.getText().isEmpty()){
             errorMessage += "Prezime ne sme biti prazno!\n";
+        }    
+        if(!Pattern.matches("^[a-zA-z]*$",firstNameField.getText())){
+            errorMessage += "Ime ne sme sadrzati brojeve i specijalne znakove\n";
         }
-        if(gradeField.getText().isEmpty()){
-            errorMessage += "Razred ne sme biti prazan!\n";
-        }else{
-            int grade = Integer.parseInt(gradeField.getText());
-            if(grade<1||grade>8){
-                errorMessage += "Razred mora biti broj izmedju 1 i 8!\n";
-            }
+        if(!Pattern.matches("^[a-zA-z]*$",lastNameField.getText())){
+            errorMessage += "Prezime ne sme sadrzati brojeve i specijalne znakove\n";
         }
-        
         return errorMessage;
     }
     
-
+    public void initData(){
+        try {
+            schoolList = Communication.getInstance().getAllSchools();
+            for(School school:schoolList){
+                schoolField.addItem(school.getName());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAddStudent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTextField firstNameField;
-    private javax.swing.JTextField gradeField;
+    private javax.swing.JComboBox<Integer> gradeField;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField lastNameField;
+    private javax.swing.JComboBox<String> schoolField;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,6 +17,7 @@ public class Student implements GenericEntity{
     private String firstName;
     private String lastName;
     private int grade;
+    private School school;
 
     @Override
     public int hashCode() {
@@ -54,8 +55,9 @@ public class Student implements GenericEntity{
 
     @Override
     public String toString() {
-        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", grade=" + grade + '}';
+        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", grade=" + grade + ", school=" + school.toString() + '}';
     }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -71,6 +73,10 @@ public class Student implements GenericEntity{
 
     public void setGrade(int grade) {
         this.grade = grade;
+    }
+
+    public void setSchool(School school) {
+        this.school = school;
     }
     
     @Override
@@ -90,17 +96,33 @@ public class Student implements GenericEntity{
         return grade;
     }
 
-    public Student(Long id, String firstName, String lastName, int grade) {
+    public School getSchool() {
+        return school;
+    }
+
+    public Student(Long id, String firstName, String lastName, int grade, School school) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.grade = grade;
+        this.school = school;
     }
 
-    public Student(String firstName, String lastName, int grade) {
+    public Student(String firstName, String lastName, int grade, School school) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.grade = grade;
+        this.school = school;
+    }
+    
+    public Student(Long id,String firstName, String lastName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    
+    public Student(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -110,28 +132,62 @@ public class Student implements GenericEntity{
 
     @Override
     public String getColumnNamesForInsert() {
-        return "first_name,last_name,grade";
+        return "first_name,last_name,grade,school_id";
     }
 
     @Override
     public String getInsertValues() {
-        return "'" + this.firstName + "','" + this.lastName + "'," + this.grade;
+        return "'" + this.firstName + "','" + this.lastName + "'," + this.grade + ", " + this.getSchool().getId();
     }
     
     @Override
     public String getParametersForUpdate(){
         return "first_name = '" + this.firstName + "', last_name = '" + this.lastName
-                + "', grade = " + this.grade;
+                + "', grade = " + this.grade + ", school_id=" + this.getSchool().getId();
     }
     
     @Override
     public Student createInstance(Object obj[]){
-        return new Student(Long.valueOf(obj[0].toString()),obj[1].toString(),obj[2].toString(),Integer.parseInt(obj[3].toString()));
+        return new Student(Long.valueOf(obj[0].toString()),obj[1].toString(),obj[2].toString());
     } 
 
     @Override
     public String getParametersForDelete() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Student createDetailedInstance(Object[] obj) {
+        return new Student(Long.valueOf(obj[0].toString()),obj[1].toString(),obj[2].toString(),(int) obj[4],new School(Long.valueOf(obj[3].toString())));
+    }
+
+    @Override
+    public String getParametersForSearch() {
+        String parameters = "";
+        if(id!=0){
+            parameters+= "id =" + id;
+        }
+        if(firstName!=null&&!firstName.isEmpty()){
+            if(!parameters.isEmpty())
+                parameters += " AND ";
+            parameters+= "first_name LIKE '" + this.firstName + "%'";
+        }
+        if(lastName!=null&&!lastName.isEmpty()){
+            if(!parameters.isEmpty())
+                parameters += " AND ";
+            parameters+= "last_name LIKE '" + this.lastName + "%'";
+        }
+        if(this.grade!=0){
+            if(!parameters.isEmpty())
+                parameters += " AND ";
+            parameters+= "grade = " + this.grade;
+        }
+        if(this.school!=null){
+            if(!parameters.isEmpty())
+                parameters += " AND ";
+            parameters+= "school_id =" + this.school.getId();
+        }
+        return parameters;
     }
     
 }

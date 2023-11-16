@@ -5,6 +5,8 @@
  */
 package Communication;
 
+import Domain.Agency;
+import Domain.School;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
@@ -57,6 +59,7 @@ public class Communication {
         if(response.getException()==null){
             System.out.println("Teacher successfully added");
         }else{
+            System.out.println("Error! Couldn't add Teacher: " + response.getResult().toString());
             throw response.getException();
         }
     }
@@ -68,6 +71,43 @@ public class Communication {
         if(response.getException()==null){
             System.out.println("Student successfully added");
         }else{
+            System.out.println("Error! Couldn't add Student: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+    
+    public void addTrip(Trip trip) throws Exception {
+        Request request = new Request(Operation.ADD_TRIP,trip);
+        sender.send(request);
+        Response response = (Response)receiver.receive();
+        if(response.getException()==null){
+            System.out.println("Trip successfully added");
+        }else{
+            System.out.println("Error! Couldn't add Trip: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+
+    public void addTripTeacher(TripTeacher tt) throws Exception {
+        Request request = new Request(Operation.ADD_TRIPTEACHER,tt);
+        sender.send(request);
+        Response response = (Response)receiver.receive();
+        if(response.getException()==null){
+            System.out.println("TripTeacher successfully added");
+        }else{
+            System.out.println("Error! Couldn't add TripTeacher: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+
+    public void addTripStudent(TripStudent ts) throws Exception {
+        Request request = new Request(Operation.ADD_TRIPSTUDENT,ts);
+        sender.send(request);
+        Response response = (Response)receiver.receive();
+        if(response.getException()==null){
+            System.out.println("TripStudent successfully added");
+        }else{
+            System.out.println("Error! Couldn't add TripStudent: " + response.getResult().toString());
             throw response.getException();
         }
     }
@@ -82,69 +122,13 @@ public class Communication {
             throw response.getException();
         }
     }
-
-    public void editTeacher(Teacher teacher) throws Exception {
-        Request request=new Request(Operation.EDIT_TEACHER, teacher);
-        sender.send(request);
-        Response response=(Response)receiver.receive();
-        if(response.getException()==null){
-            System.out.println("Student edited successfully");
-        }else{
-            throw response.getException();
-        }
-    }
-
+    
     public List<Student> getAllStudents() throws Exception {
         Request request=new Request(Operation.GET_ALL_STUDENTS, null);
         sender.send(request);
         Response response=(Response)receiver.receive();
         if(response.getException()==null){
             return (List<Student>)response.getResult();
-        }else{
-            throw response.getException();
-        }
-    }
-    
-    
-    public void editStudent(Student student) throws Exception {
-        Request request=new Request(Operation.EDIT_STUDENT, student);
-        sender.send(request);
-        Response response=(Response)receiver.receive();
-        if(response.getException()==null){
-            
-        }else{
-            throw response.getException();
-        }
-    }
-
-    public void addTrip(Trip trip) throws Exception {
-        Request request = new Request(Operation.ADD_TRIP,trip);
-        sender.send(request);
-        Response response = (Response)receiver.receive();
-        if(response.getException()==null){
-            System.out.println("Trip successfully added");
-        }else{
-            throw response.getException();
-        }
-    }
-
-    public void addTripTeacher(TripTeacher tt) throws Exception {
-        Request request = new Request(Operation.ADD_TRIPTEACHER,tt);
-        sender.send(request);
-        Response response = (Response)receiver.receive();
-        if(response.getException()==null){
-            System.out.println("TripTeacher successfully added");
-        }else{
-            throw response.getException();
-        }
-    }
-
-    public void addTripStudent(TripStudent ts) throws Exception {
-        Request request = new Request(Operation.ADD_TRIPSTUDENT,ts);
-        sender.send(request);
-        Response response = (Response)receiver.receive();
-        if(response.getException()==null){
-            System.out.println("TripStudent successfully added");
         }else{
             throw response.getException();
         }
@@ -183,13 +167,38 @@ public class Communication {
         }
     }
 
+    public void editTeacher(Teacher teacher) throws Exception {
+        Request request=new Request(Operation.EDIT_TEACHER, teacher);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            System.out.println("Teacher edited successfully");
+        }else{
+            System.out.println("Error! Couldn't edit Teacher: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+    
+    public void editStudent(Student student) throws Exception {
+        Request request=new Request(Operation.EDIT_STUDENT, student);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            System.out.println("Student edited successfully.");
+        }else{
+            System.out.println("Error! Couldn't edit Student: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+
     public void editTrip(Trip trip) throws Exception {
         Request request=new Request(Operation.EDIT_TRIP, trip);
         sender.send(request);
         Response response=(Response)receiver.receive();
         if(response.getException()==null){
-            
+            System.out.println("Trip edited successfully.");
         }else{
+            System.out.println("Error! Couldn't edit Trip: " + response.getResult().toString());
             throw response.getException();
         }
     }
@@ -199,8 +208,9 @@ public class Communication {
         sender.send(request);
         Response response = (Response) receiver.receive();
         if(response.getException()==null){
-            
+            System.out.println("TripStudent removed successfully.");
         }else{
+            System.out.println("Error! Couldn't remove TripTeacher: " + response.getResult().toString());
             throw response.getException();
         }
     }
@@ -210,7 +220,110 @@ public class Communication {
         sender.send(request);
         Response response = (Response) receiver.receive();
         if(response.getException()==null){
-            
+            System.out.println("TripTeacher removed successfully.");
+        }else{
+            System.out.println("Error! Couldn't remove TripStudent: " + response.getResult().toString());
+            throw response.getException();
+        }
+    }
+
+    public List<School> getAllSchools() throws Exception {
+        Request request=new Request(Operation.GET_ALL_SCHOOLS, null);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (List<School>)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+
+    public List<Agency> getAllAgencies() throws Exception {
+        Request request=new Request(Operation.GET_ALL_AGENCIES, null);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (List<Agency>)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    
+
+    public Student getStudent(Student student) throws Exception {
+        Request request=new Request(Operation.GET_STUDENT, student);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (Student)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    public Trip getTrip(Trip trip) throws Exception {
+        Request request=new Request(Operation.GET_TRIP, trip);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (Trip)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    public Teacher getTeacher(Teacher teacher) throws Exception {
+        Request request=new Request(Operation.GET_TEACHER, teacher);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (Teacher)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    public School getSchool(School school) throws Exception {
+        Request request=new Request(Operation.GET_SCHOOL, school);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (School)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    public Agency getAgency(Agency agency) throws Exception {
+        Request request=new Request(Operation.GET_AGENCY, agency);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (Agency)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    
+    public List<Teacher> findTeachers(Teacher teacher) throws Exception {
+        Request request=new Request(Operation.FIND_TEACHERS, teacher);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (List<Teacher>)response.getResult();
+        }else{
+            throw response.getException();
+        }
+    }
+    
+    public List<Student> findStudents(Student student) throws Exception {
+        Request request=new Request(Operation.FIND_STUDENTS, student);
+        sender.send(request);
+        Response response=(Response)receiver.receive();
+        if(response.getException()==null){
+            return (List<Student>)response.getResult();
         }else{
             throw response.getException();
         }

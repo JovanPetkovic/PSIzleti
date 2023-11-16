@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -29,10 +30,12 @@ public class FrmAllStudentsTrips extends javax.swing.JFrame {
     
     public FrmAllStudentsTrips() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
     public FrmAllStudentsTrips(Student s){
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         student = s;
         try {
             initializeTrips();

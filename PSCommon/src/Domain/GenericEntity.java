@@ -21,11 +21,15 @@ public interface GenericEntity extends Serializable {
     
     String getParametersForDelete();
     
+    String getParametersForSearch();
+    
     Long getId();
 
     String getInsertValues();
     
     GenericEntity createInstance(Object obj[]);
+    
+    GenericEntity createDetailedInstance(Object obj[]);
 
     void setId(Long id);
 

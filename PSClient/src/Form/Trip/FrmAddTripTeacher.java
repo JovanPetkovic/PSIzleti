@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
 import Domain.Teacher;
+import javax.swing.JFrame;
 
 /**
  *
@@ -29,10 +30,12 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
      */
     public FrmAddTripTeacher() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
     public FrmAddTripTeacher(FrmAddTrip frm) {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addTrip = frm;
         changeTrip = null;
         selectedTeachers = new ArrayList<>();
@@ -41,10 +44,10 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
     
     public FrmAddTripTeacher(FrmChangeTrip frm, List<Teacher> teachers) {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         changeTrip = frm;
         addTrip = null;
-        selectedTeachers = new ArrayList<>();
-        selectedTeachers.addAll(teachers);
+        selectedTeachers = teachers;
         fillTeacherTable();
     }
 
@@ -71,7 +74,7 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
         allTeacherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane1.setViewportView(allTeacherTable);
@@ -93,7 +96,7 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
         selectedTeacherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane2.setViewportView(selectedTeacherTable);
@@ -164,7 +167,7 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
         allTeachers.remove(allTeacherTable.getSelectedRow());
         DefaultTableModel dtm;
         dtm = (DefaultTableModel) selectedTeacherTable.getModel();
-        dtm.addRow(new Object[] {teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
+        dtm.addRow(new Object[] {teacher.getFirstName(),teacher.getLastName()});
         dtm = (DefaultTableModel) allTeacherTable.getModel();
         dtm.removeRow(allTeacherTable.getSelectedRow());
         
@@ -176,7 +179,7 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
         selectedTeachers.remove(selectedTeacherTable.getSelectedRow());
         DefaultTableModel dtm;
         dtm = (DefaultTableModel) allTeacherTable.getModel();
-        dtm.addRow(new Object[] {teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
+        dtm.addRow(new Object[] {teacher.getFirstName(),teacher.getLastName()});
         dtm = (DefaultTableModel) selectedTeacherTable.getModel();
         dtm.removeRow(selectedTeacherTable.getSelectedRow());
     }//GEN-LAST:event_removeButtonActionPerformed
@@ -254,10 +257,10 @@ public class FrmAddTripTeacher extends javax.swing.JFrame {
             dummyTeachers.addAll(allTeachers);
             for(Teacher teacher:dummyTeachers){
                 if(!selectedTeachers.contains(teacher)){
-                    dtm.addRow(new Object[] {teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
+                    dtm.addRow(new Object[] {teacher.getFirstName(),teacher.getLastName()});
                 }
                 else{
-                    dtm2.addRow(new Object[] {teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
+                    dtm2.addRow(new Object[] {teacher.getFirstName(),teacher.getLastName()});
                     allTeachers.remove(teacher);
                 }    
             }

@@ -5,23 +5,23 @@
 package Form.Trip;
 
 import Form.*;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
+import Domain.Agency;
 import Domain.Student;
 import Domain.Teacher;
 import Domain.Trip;
 import Domain.TripStudent;
 import Domain.TripTeacher;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -29,37 +29,25 @@ import Domain.TripTeacher;
  */
 public class FrmChangeTrip extends javax.swing.JFrame {
 
-    FrmAddTripTeacher tripTeacherForm;
-    FrmAddTripStudent tripStudentForm;
-    List<Teacher> selectedTeachers;
-    List<Student> selectedStudents;
-    List<TripTeacher> deleteTripTeachers;
-    List<TripStudent> deleteTripStudents;
-    List<TripTeacher> addedTripTeachers;
-    List<TripStudent> addedTripStudents;
     Trip tripToChange;
-    long tripID;
+    List<Teacher> teacherList;
+    List<Student> studentList;
+    List<Agency> agencyList;
     
     /**
      * Creates new form FrmAddTrip
+     * @param trip
      */
-    public FrmChangeTrip() {
+    public FrmChangeTrip(Trip trip) {
+        tripToChange = trip;
+        teacherList = trip.getTripTeachers();
+        studentList = trip.getTripStudents();
         initComponents();
+        initAgencyData();
+        fillInData();
+        disableFields();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initializeForms();
-        tripID = 0;
-    }
-
-    FrmChangeTrip(Trip selectedTrip, List<Student> selectedStudents, List<Teacher> selectedTeachers, List<Student> restStudents, List<Teacher> restTeachers) {
-        initComponents();
-        tripToChange = selectedTrip;
-        this.selectedStudents = selectedStudents;
-        this.selectedTeachers = selectedTeachers;
-        initializeForms();
-        fillForms();
-        deleteTripTeachers = new ArrayList<>();
-        deleteTripStudents = new ArrayList<>();
-        addedTripTeachers = new ArrayList<>();
-        addedTripStudents = new ArrayList<>();
     }
 
     /**
@@ -81,12 +69,14 @@ public class FrmChangeTrip extends javax.swing.JFrame {
         priceField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         teacherTable = new javax.swing.JTable();
-        addTeacherButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         studentTable = new javax.swing.JTable();
-        addStudentButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        agencyField = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        changeTeacherButton = new javax.swing.JButton();
+        changeStudentButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -101,32 +91,18 @@ public class FrmChangeTrip extends javax.swing.JFrame {
         teacherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane1.setViewportView(teacherTable);
 
-        addTeacherButton.setText("Izmeni Nastvnike");
-        addTeacherButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addTeacherButtonActionPerformed(evt);
-            }
-        });
-
         studentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime", "Razred"
+                "Prezime", "Razred"
             }
         ));
         jScrollPane2.setViewportView(studentTable);
-
-        addStudentButton.setText("Izmeni Ucenike");
-        addStudentButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addStudentButtonActionPerformed(evt);
-            }
-        });
 
         saveButton.setText("Zapamti izlet");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -135,10 +111,28 @@ public class FrmChangeTrip extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Nazad");
+        jButton1.setText("Omogući izmene");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        agencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel6.setText("Agencija:");
+
+        changeTeacherButton.setText("Izmeni nastavnike");
+        changeTeacherButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeTeacherButtonActionPerformed(evt);
+            }
+        });
+
+        changeStudentButton.setText("Izmeni učenike");
+        changeStudentButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeStudentButtonActionPerformed(evt);
             }
         });
 
@@ -147,105 +141,112 @@ public class FrmChangeTrip extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(jLabel1)
-                                                .addGap(43, 43, 43))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel2)
-                                                .addGap(19, 19, 19)))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel3)
-                                                .addComponent(jLabel4))
-                                            .addGap(51, 51, 51)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(startDateField)
-                                        .addComponent(destinationField)
-                                        .addComponent(endDateField)
-                                        .addComponent(priceField, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))))))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel1))
+                        .addGap(51, 51, 51)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(destinationField)
+                            .addComponent(endDateField)
+                            .addComponent(priceField)
+                            .addComponent(agencyField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
-                        .addComponent(addTeacherButton))
+                        .addComponent(jLabel2)
+                        .addGap(34, 34, 34)
+                        .addComponent(startDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
-                        .addComponent(addStudentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(25, 25, 25)
+                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(1, 1, 1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(saveButton)
-                        .addGap(54, 54, 54)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addContainerGap(22, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(changeTeacherButton)
+                        .addGap(113, 113, 113))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(changeStudentButton)
+                        .addGap(122, 122, 122))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(destinationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(startDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(endDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(addTeacherButton)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(addStudentButton)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveButton)
-                    .addComponent(jButton1))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(changeTeacherButton)
+                        .addGap(9, 9, 9)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(destinationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(startDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(endDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(agencyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addGap(27, 27, 27)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1)
+                            .addComponent(saveButton))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(changeStudentButton)
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        if(validateData().isEmpty()){
-            saveTripBase();
-            saveTripTeachers();
-            saveTripStudents();
-            JOptionPane.showMessageDialog(this,"Podaci o izletu su sačuvani.");
-            this.dispose();
-        }else{
-            JOptionPane.showMessageDialog(this, validateData());
+        gatherAndSetTripData();
+        try {
+            Communication.getInstance().editTrip(tripToChange);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
         }
+        JOptionPane.showMessageDialog(this, "Sistem je zapamtio izlet.");
+        this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void addTeacherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTeacherButtonActionPerformed
-        tripTeacherForm.setVisible(true);
-    }//GEN-LAST:event_addTeacherButtonActionPerformed
-
-    private void addStudentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStudentButtonActionPerformed
-        tripStudentForm.setVisible(true);
-    }//GEN-LAST:event_addStudentButtonActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.dispose();
+        enableFields();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void changeTeacherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeTeacherButtonActionPerformed
+        (new FrmAddTripTeacher(this,teacherList)).setVisible(true);
+    }//GEN-LAST:event_changeTeacherButtonActionPerformed
+
+    private void changeStudentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeStudentButtonActionPerformed
+        (new FrmAddTripStudent(this,studentList)).setVisible(true);
+    }//GEN-LAST:event_changeStudentButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -264,30 +265,29 @@ public class FrmChangeTrip extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmChangeTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmAddTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmChangeTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmAddTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmChangeTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmAddTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmChangeTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmAddTrip.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmChangeTrip().setVisible(true);
+                new FrmAddTrip().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addStudentButton;
-    private javax.swing.JButton addTeacherButton;
+    private javax.swing.JComboBox<String> agencyField;
+    private javax.swing.JButton changeStudentButton;
+    private javax.swing.JButton changeTeacherButton;
     private javax.swing.JTextField destinationField;
     private javax.swing.JTextField endDateField;
     private javax.swing.JButton jButton1;
@@ -295,6 +295,7 @@ public class FrmChangeTrip extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField priceField;
@@ -303,185 +304,118 @@ public class FrmChangeTrip extends javax.swing.JFrame {
     private javax.swing.JTable studentTable;
     private javax.swing.JTable teacherTable;
     // End of variables declaration//GEN-END:variables
-
-    private void saveTripBase() {
-        tripID = tripToChange.getId();
-        tripToChange.setDestination(destinationField.getText());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+   
+    private void gatherAndSetTripData(){
+        //Gathering Data
+        
         Date startDate = null;
         Date endDate = null;
         try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             startDate = dateFormat.parse(startDateField.getText());
             endDate = dateFormat.parse(endDateField.getText());
         } catch (ParseException ex) {
-            Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Long price = Long.parseLong(priceField.getText());
+        
+        //Setting values of trip fields
+        
+        tripToChange.setDestination(destinationField.getText());
         tripToChange.setStartDate(startDate);
         tripToChange.setEndDate(endDate);
-        tripToChange.setPrice(price);
-        try {
-            Communication.getInstance().editTrip(tripToChange);
-        } catch (Exception ex) {
-            Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void saveTripTeachers() {
-        List<TripTeacher> dummyTT = new ArrayList<>();
-        dummyTT.addAll(deleteTripTeachers);
-        for(TripTeacher tt:dummyTT){
-            if(addedTripTeachers.remove(tt)){
-                deleteTripTeachers.remove(tt);
-            }else{
-                try {
-                    System.out.println("Deleting Teacher: " + tt.toString());
-                    Communication.getInstance().deleteTripTeacher(tt);
-                } catch (Exception ex) {
-                    Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }  
-        for(TripTeacher tt:addedTripTeachers){
-            try {
-                System.out.println("Adding Teacher: " + tt.toString());
-                Communication.getInstance().addTripTeacher(tt);
-            } catch (Exception ex) {
-                Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private void saveTripStudents() {
-        List<TripStudent> dummyTS = new ArrayList<>();
-        dummyTS.addAll(deleteTripStudents);
-        for(TripStudent ts:dummyTS){
-            if(addedTripStudents.remove(ts)){
-                deleteTripStudents.remove(ts);
-            }else{
-                try {
-                    System.out.println("Deleting Student: " + ts.toString());
-                    Communication.getInstance().deleteTripStudent(ts);
-                } catch (Exception ex) {
-                    Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        for(TripStudent ts:addedTripStudents){
-            try {
-                System.out.println("Adding student: " + ts.toString());
-                Communication.getInstance().addTripStudent(ts);
-            } catch (Exception ex) {
-                Logger.getLogger(FrmChangeTrip.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        tripToChange.setPrice(Long.valueOf(priceField.getText()));
+        tripToChange.setAgency(agencyList.get(agencyField.getSelectedIndex()));
+        tripToChange.setStudentList(studentList);
+        tripToChange.setTeacherList(teacherList);
     }
 
     private void initializeForms() {
-        tripTeacherForm = new FrmAddTripTeacher(this, selectedTeachers);
-        tripStudentForm = new FrmAddTripStudent(this, selectedStudents);
+//        tripTeacherForm = new FrmAddTripTeacher(this);
+//        tripStudentForm = new FrmAddTripStudent(this);
     }
 
-    void saveTeachers(List<Teacher> teachers) {
-        for(Teacher teacher:selectedTeachers){
-            if(!teachers.contains(teacher)){
-                deleteTripTeachers.add(new TripTeacher(tripToChange.getId(),teacher.getId()));
-            }
+    void saveTeachers(List<Teacher> selectedTeachers) {
+        teacherList = selectedTeachers;
+        DefaultTableModel dtm = (DefaultTableModel) teacherTable.getModel();
+        clearTable(dtm);
+        for(Teacher teacher:teacherList){
+            dtm.addRow(new Object[]{teacher.getFirstName(),teacher.getLastName()});
         }
-        for(Teacher teacher:teachers){
-            if(selectedTeachers==null||selectedTeachers.isEmpty()||!selectedTeachers.contains(teacher)){
-                addedTripTeachers.add(new TripTeacher(tripToChange.getId(),teacher.getId()));
-            }
-        }
-        selectedTeachers = teachers;
-        fillTeacherTable();
     }
 
-    void saveStudents(List<Student> students) {
-        for(Student student:selectedStudents){
-            if(!students.contains(student)){
-                deleteTripStudents.add(new TripStudent(tripToChange.getId(),student.getId()));
-            }
+    void saveStudents(List<Student> selectedStudents) {
+        studentList = selectedStudents;
+        DefaultTableModel dtm = (DefaultTableModel) studentTable.getModel();
+        clearTable(dtm);
+        for(Student student:studentList){
+            dtm.addRow(new Object[]{student.getFirstName(),student.getLastName()});
         }
-        for(Student student:students){
-            if(selectedStudents==null||selectedStudents.isEmpty()||!selectedStudents.contains(student)){
-                addedTripStudents.add(new TripStudent(tripToChange.getId(),student.getId()));
-            }
+    }
+    
+    private void clearTable(DefaultTableModel table){
+        int tableRowCount = table.getRowCount();
+        for(int i = 0;i<tableRowCount;i++){
+            table.removeRow(0);
         }
-        selectedStudents = students;
-        fillStudentTable();
     }
 
-    private void fillForms() {
+    private void initAgencyData() {
+        try {
+            agencyList = Communication.getInstance().getAllAgencies();
+            for(Agency school:agencyList){
+                agencyField.addItem(school.getName());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void fillInData() {
         destinationField.setText(tripToChange.getDestination());
         startDateField.setText(tripToChange.getStartDateString());
         endDateField.setText(tripToChange.getEndDateString());
-        priceField.setText("" + tripToChange.getPrice());
+        priceField.setText(tripToChange.getPrice().toString());
+        agencyField.setSelectedItem(tripToChange.getAgency().getName());
         fillTeacherTable();
         fillStudentTable();
+    }
+
+    private void disableFields() {
+        destinationField.setEditable(false);
+        startDateField.setEditable(false);
+        endDateField.setEditable(false);
+        priceField.setEditable(false);
+        agencyField.setEnabled(false);
+    }
+
+    private void enableFields() {
+        destinationField.setEditable(true);
+        startDateField.setEditable(true);
+        endDateField.setEditable(true);
+        priceField.setEditable(true);
+        agencyField.setEnabled(true);
     }
 
     private void fillTeacherTable() {
         DefaultTableModel dtm = (DefaultTableModel) teacherTable.getModel();
-        while(dtm.getRowCount()>0){
-            dtm.removeRow(0);
-        }
-        for(Teacher teacher:selectedTeachers){
-            dtm.addRow(new Object[]{teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
-        }
-    }
-    
-    private void fillStudentTable() {
-        DefaultTableModel dtm = (DefaultTableModel) studentTable.getModel();
-        while(dtm.getRowCount()>0){
-            dtm.removeRow(0);
-        }
-        for(Student student:selectedStudents){
-            dtm.addRow(new Object[]{student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+        cleanTable(dtm);
+        for(Teacher teacher:teacherList){
+            dtm.addRow(new Object[]{teacher.getFirstName(),teacher.getLastName()});
         }
     }
 
-    private String validateData() {
-        String destination = destinationField.getText();
-        String startDateTxt = startDateField.getText();
-        String endDateTxt = endDateField.getText();
-        String priceTxt = priceField.getText();
-        
-        String errorMessage = "";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date date;
-        //Metoda ispod omogucava striktnije formatiranje datuma.
-        dateFormat.setLenient(false);
-        
-        if(destination.isEmpty()){
-            errorMessage += "Polje destinacije izleta ne sme biti prazno!\n";
+    private void fillStudentTable() {
+        DefaultTableModel dtm = (DefaultTableModel) studentTable.getModel();
+        cleanTable(dtm);
+        for(Student student:studentList){
+            dtm.addRow(new Object[]{student.getFirstName(),student.getLastName()});
         }
-        if(startDateTxt.isEmpty()){
-            errorMessage += "Polje početka izleta ne sme biti prazno!\n";
-        }
-        try{
-            date = dateFormat.parse(startDateTxt);
-        } catch(ParseException ex){
-            errorMessage += "Početak izleta nije ispravno upisan! Format datuma je 21-12-2012.\n";
-        }
-        try{
-            date = dateFormat.parse(endDateTxt);
-        } catch(ParseException ex){
-            errorMessage += "Kraj izleta nije ispravno upisan! Format datuma je 21-12-2012.\n";
-        }
-        if(endDateTxt.isEmpty()){
-            errorMessage += "Polje kraja izleta ne sme biti prazno!\n";
-        }
-        if(priceTxt.isEmpty()){
-            errorMessage += "Polje cene izleta ne sme biti prazno!\n";
-        }
-        double price = Double.parseDouble(priceTxt);
-        if(price<0){
-            errorMessage += "Cena ne može biti negativan broj\n";
-        }
-        
-        
-        return errorMessage;
     }
     
+    private void cleanTable(DefaultTableModel dtm) {
+        int count = dtm.getRowCount();
+        for(int i=0;i<count;i++){
+            dtm.removeRow(0);
+        }
+    }
 }

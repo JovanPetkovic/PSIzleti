@@ -5,6 +5,8 @@
  */
 package Controller;
 
+import Domain.Agency;
+import Domain.School;
 import java.util.List;
 import Domain.Trip;
 import Domain.Student;
@@ -13,15 +15,24 @@ import Domain.TripStudent;
 import Domain.TripTeacher;
 import Domain.User;
 import Operation.AbstractGenericOperation;
+import Operation.Agency.GetAgency;
+import Operation.Agency.GetAllAgencies;
+import Operation.School.GetAllSchools;
+import Operation.School.GetSchool;
 import Operation.Student.AddStudent;
 import Operation.Student.EditStudent;
+import Operation.Student.FindStudents;
 import Operation.Student.GetAllStudents;
+import Operation.Student.GetStudent;
 import Operation.Teacher.AddTeacher;
 import Operation.Teacher.EditTeacher;
+import Operation.Teacher.FindTeachers;
 import Operation.Teacher.GetAllTeachers;
+import Operation.Teacher.GetTeacher;
 import Operation.Trip.AddTrip;
 import Operation.Trip.EditTrip;
 import Operation.Trip.GetAllTrips;
+import Operation.Trip.GetTrip;
 import Operation.TripStudent.AddTripStudent;
 import Operation.TripStudent.DeleteTripStudent;
 import Operation.TripStudent.GetAllTripStudents;
@@ -123,6 +134,8 @@ public class Controller {
         return ((GetAllTripStudents)operation).getTripStudents();
     }
 
+    //Edit Methods
+    
     public void editTeacher(Teacher teacherEdit) throws Exception {
         AbstractGenericOperation operation = new EditTeacher();
         operation.execute(teacherEdit);
@@ -138,6 +151,8 @@ public class Controller {
         operation.execute(tripEdit);
     }
 
+    //Delete Methods
+    
     public void deleteTripTeacher(TripTeacher tripT) throws Exception {
         AbstractGenericOperation operation = new DeleteTripTeacher();
         operation.execute(tripT);
@@ -147,6 +162,58 @@ public class Controller {
         AbstractGenericOperation operation = new DeleteTripStudent();
         operation.execute(tripS);
     }
+
+    public List<School> getAllSchools() throws Exception {
+        AbstractGenericOperation operation = new GetAllSchools();
+        operation.execute(new School());
+        return ((GetAllSchools)operation).getSchools();
+    }
+
+    public List<Agency> getAllAgencies() throws Exception {
+        AbstractGenericOperation operation = new GetAllAgencies();
+        operation.execute(new Agency());
+        return ((GetAllAgencies)operation).getAgencies();
+    }
+
+    public Teacher getTeacher(Teacher teacher) throws Exception {
+        AbstractGenericOperation operation = new GetTeacher();
+        operation.execute(teacher);
+        return ((GetTeacher)operation).getTeacher();
+    }
+
+    public Student getStudent(Student student) throws Exception {
+        AbstractGenericOperation operation = new GetStudent();
+        operation.execute(student);
+        return ((GetStudent)operation).getStudent();
+    }
+
+    public Trip getTrip(Trip trip) throws Exception {
+        AbstractGenericOperation operation = new GetTrip();
+        operation.execute(trip);
+        return ((GetTrip)operation).getTrip();
+    }
+
+    public School getSchool(School school) throws Exception {
+        AbstractGenericOperation operation = new GetSchool();
+        operation.execute(school);
+        return ((GetSchool)operation).getSchool();
+    }
+
+    public Agency getAgency(Agency agency) throws Exception {
+        AbstractGenericOperation operation = new GetAgency();
+        operation.execute(agency);
+        return ((GetAgency)operation).getAgency();
+    }
     
+    public List<Student> findStudents(Student student) throws Exception{
+        AbstractGenericOperation operation = new FindStudents();
+        operation.execute(student);
+        return ((FindStudents)operation).getStudents();
+    }
     
+    public List<Teacher> findTeachers(Teacher teacher) throws Exception{
+        AbstractGenericOperation operation = new FindTeachers();
+        operation.execute(teacher);
+        return ((FindTeachers)operation).getTeachers();
+    }
 }

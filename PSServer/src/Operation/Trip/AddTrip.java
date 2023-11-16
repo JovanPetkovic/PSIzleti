@@ -4,7 +4,12 @@
  */
 package Operation.Trip;
 
+
+import Domain.Student;
+import Domain.Teacher;
 import Domain.Trip;
+import Domain.TripStudent;
+import Domain.TripTeacher;
 import Operation.AbstractGenericOperation;
 
 /**
@@ -23,7 +28,12 @@ public class AddTrip extends AbstractGenericOperation{
 
     @Override
     protected void executeOperation(Object param) throws Exception {
-        repository.add((Trip) param);
+        Trip trip = (Trip) param;
+        repository.add(trip);
+        for(Teacher t: trip.getTripTeachers())
+            repository.add(new TripTeacher(trip.getId(),t.getId()));
+        for(Student s: trip.getTripStudents())
+            repository.add(new TripStudent(trip.getId(),s.getId()));
     }
     
 }

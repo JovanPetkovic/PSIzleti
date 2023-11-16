@@ -4,12 +4,15 @@
  */
 package Form.Student;
 
-import Form.*;
 import static java.lang.Thread.sleep;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
+import Domain.School;
 import Domain.Student;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 /**
  *
@@ -19,15 +22,16 @@ public class FrmAllStudent extends javax.swing.JFrame {
 
     DefaultTableModel dtm;
     List<Student> studentList;
-    
+    List<School> schoolList;
     
     /**
      * Creates new form FrmAllStudent
      */
     public FrmAllStudent() {
         initComponents();
+        initData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dtm = (DefaultTableModel) studentTable.getModel();
-        refreshData();
     }
 
     /**
@@ -41,33 +45,28 @@ public class FrmAllStudent extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         studentTable = new javax.swing.JTable();
-        changeButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         searchButton = new javax.swing.JButton();
         firstNameField = new javax.swing.JTextField();
         lastNameField = new javax.swing.JTextField();
-        gradeField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        showTrips = new javax.swing.JButton();
+        gradeField = new javax.swing.JComboBox<Integer>();
+        gradeField.setModel(new javax.swing.DefaultComboBoxModel<>(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8 }));
+        schoolField = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        showAllButton = new javax.swing.JButton();
+        changeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         studentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime", "Razred"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane1.setViewportView(studentTable);
-
-        changeButton.setText("Izmeni");
-        changeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeButtonActionPerformed(evt);
-            }
-        });
 
         jLabel1.setText("Ime:");
 
@@ -75,24 +74,28 @@ public class FrmAllStudent extends javax.swing.JFrame {
 
         jLabel3.setText("Razred:");
 
-        searchButton.setText("Pretrazi");
+        searchButton.setText("Pretraži");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Nazad");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        schoolField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel4.setText("Škola:");
+
+        showAllButton.setText("Prikaži Sve");
+        showAllButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                showAllButtonMouseClicked(evt);
             }
         });
 
-        showTrips.setText("Prikazi putovanja");
-        showTrips.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showTripsActionPerformed(evt);
+        changeButton.setText("Izmeni");
+        changeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                changeButtonMouseClicked(evt);
             }
         });
 
@@ -103,88 +106,101 @@ public class FrmAllStudent extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(41, 41, 41)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addGap(44, 44, 44)
-                                        .addComponent(gradeField, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(schoolField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lastNameField)
+                            .addComponent(gradeField, 0, 179, Short.MAX_VALUE)
+                            .addComponent(firstNameField)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(110, 110, 110)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(159, 159, 159)
-                                .addComponent(searchButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(92, 92, 92)
-                                .addComponent(changeButton)
-                                .addGap(61, 61, 61)
-                                .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(136, 136, 136)
-                .addComponent(showTrips)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(69, 69, 69)
+                        .addComponent(searchButton)
+                        .addGap(37, 37, 37)
+                        .addComponent(showAllButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(changeButton)
+                .addGap(122, 122, 122))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(gradeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(searchButton)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(changeButton)
-                    .addComponent(jButton1))
-                .addGap(18, 18, 18)
-                .addComponent(showTrips)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(86, 86, 86)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(firstNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(lastNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(gradeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(schoolField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(searchButton)
+                            .addComponent(showAllButton))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(changeButton)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-        Student selectedStudent = studentList.get(studentTable.getSelectedRow());
-        (new FrmChangeStudent(selectedStudent)).setVisible(true);
-    }//GEN-LAST:event_changeButtonActionPerformed
-
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        Student findParam = new Student();
+        findParam.setFirstName(firstNameField.getText());
+        findParam.setLastName(lastNameField.getText());
+        findParam.setGrade((int) gradeField.getSelectedItem());
+        findParam.setSchool(schoolList.get(schoolField.getSelectedIndex()));
+        try {
+            studentList = Communication.getInstance().findStudents(findParam);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllStudent.class.getName()).log(Level.SEVERE, null, ex);
+        }
         fillStudentTable();
     }//GEN-LAST:event_searchButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void showAllButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAllButtonMouseClicked
+        try {
+            studentList = Communication.getInstance().getAllStudents();
+            fillStudentTable();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllStudent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_showAllButtonMouseClicked
 
-    private void showTripsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTripsActionPerformed
-        new FrmAllStudentsTrips(studentList.get(studentTable.getSelectedRow())).setVisible(true);
-    }//GEN-LAST:event_showTripsActionPerformed
+    private void changeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_changeButtonMouseClicked
+        try {
+            Student student = studentList.get(studentTable.getSelectedRow());  
+            Student changeStudent = Communication.getInstance().getStudent(student);
+            System.out.println(changeStudent.toString());
+            changeStudent.setSchool(Communication.getInstance().getSchool(changeStudent.getSchool())); 
+            (new FrmChangeStudent(changeStudent)).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllStudent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_changeButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -225,28 +241,29 @@ public class FrmAllStudent extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton changeButton;
     private javax.swing.JTextField firstNameField;
-    private javax.swing.JTextField gradeField;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<Integer> gradeField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lastNameField;
+    private javax.swing.JComboBox<String> schoolField;
     private javax.swing.JButton searchButton;
-    private javax.swing.JButton showTrips;
+    private javax.swing.JButton showAllButton;
     private javax.swing.JTable studentTable;
     // End of variables declaration//GEN-END:variables
 
     private void fillStudentTable() {
-        try {
-            studentList = Communication.getInstance().getAllStudents();
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(FrmAllStudent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
         cleanTable();
+        for(Student student:studentList){
+            dtm.addRow(new Object[]{student.getFirstName(),student.getLastName()});
+        }
+    }
+    
+    private void searchStudents(){
         String firstName = firstNameField.getText().toLowerCase();
         String lastName = lastNameField.getText().toLowerCase();
-        String grade = gradeField.getText();
         for(Student student:studentList){
             boolean found = true;
             if(!firstName.isEmpty()){
@@ -255,16 +272,11 @@ public class FrmAllStudent extends javax.swing.JFrame {
             if(!lastName.isEmpty()){
                 found = student.getLastName().toLowerCase().contains(lastName);
             }
-            if(!grade.isEmpty()){
-                found = student.getGrade()==Integer.parseInt(grade);
-            }
             if(found){
                 dtm.addRow(new Object[]{student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
             }
         }
     }
-    
-    
     
     private void cleanTable() {
         int count = dtm.getRowCount();
@@ -272,32 +284,15 @@ public class FrmAllStudent extends javax.swing.JFrame {
             dtm.removeRow(0);
         }
     }
-
-    private void refreshData() {
-        RefreshThread rfThread = new RefreshThread(this);
-        rfThread.start();
-    }
-
     
-    private class RefreshThread extends Thread{
-        
-        private FrmAllStudent studentForm;
-        
-        public RefreshThread(FrmAllStudent fat){
-            studentForm = fat;
+    private void initData() {
+        try {
+            schoolList = Communication.getInstance().getAllSchools();
+            for(School school:schoolList)
+                schoolField.addItem(school.getName());
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(FrmAllStudent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
-        @Override
-        public void run(){
-            for(int i=1;i>0;i++){
-                try {
-                    studentForm.fillStudentTable();
-                    sleep(5000);          
-                } catch (InterruptedException ex) {
-                    java.util.logging.Logger.getLogger(FrmAllStudent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
     }
+    
 }

@@ -95,6 +95,7 @@ public class RepositoryDBGeneric implements DbRepository<GenericEntity> {
                     .append(" SET ").append(entity.getParametersForUpdate())
                     .append(" WHERE id = ").append(entity.getId());
             String query = sb.toString();
+            System.out.println(query);
             Statement statement = connection.createStatement();
             statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
             ResultSet rsKey = statement.getGeneratedKeys();
@@ -135,6 +136,78 @@ public class RepositoryDBGeneric implements DbRepository<GenericEntity> {
     @Override
     public List<GenericEntity> getAll() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public GenericEntity get(GenericEntity entity) throws Exception {
+        try {
+            Connection connection = DbConnectionFactory.getInstance().getConnection();
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT * FROM ")
+                    .append(entity.getTableName())
+                    .append(" WHERE id=")
+                    .append(entity.getId());
+            String query = sb.toString();
+            System.out.println(query);
+            Statement statement = connection.createStatement();
+            //U rs ubacujemo podatke iz baze podataka
+            ResultSet rs = statement.executeQuery(query);
+            //Iniciramo listu koju cemo vratiti kao izlaz iz funkcije
+            rs.next();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //Uz pomoc ResultSetMetaData dobijamo koliko kolona ima jedan
+            //objekat iz baze. Ovo radimo jer razliciti objekti imaju
+            //razlicit broj kolona
+            int length = rsmd.getColumnCount();
+            Object[] obj = new Object[length];
+            //Uz pomoc for petlje prolazimo kroz polja jednog objekta i
+            //Upisujemo u obj po redosledu pojavljivanja
+            for(int i=0;i<length;i++){
+                obj[i] = rs.getObject(i+1);
+            }
+            //U svakoj klasi koji implementira interfejs GenericEntity imamo
+            //metod createInstance
+            return entity.createDetailedInstance(obj);
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    @Override
+    public List<GenericEntity> find(GenericEntity entity) throws Exception {
+        try {
+            List<GenericEntity> returnList = new ArrayList<>();
+            Connection connection = DbConnectionFactory.getInstance().getConnection();
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT * FROM ")
+                    .append(entity.getTableName())
+                    .append(" WHERE ")
+                    .append(entity.getParametersForSearch());
+            String query = sb.toString();
+            Statement statement = connection.createStatement();
+            //U rs ubacujemo podatke iz baze podataka
+            ResultSet rs = statement.executeQuery(query);
+            //Iniciramo listu koju cemo vratiti kao izlaz iz funkcije
+            while(rs.next()){
+                 ResultSetMetaData rsmd = rs.getMetaData();
+                //Uz pomoc ResultSetMetaData dobijamo koliko kolona ima jedan
+                //objekat iz baze. Ovo radimo jer razliciti objekti imaju
+                //razlicit broj kolona
+                int length = rsmd.getColumnCount();
+                Object[] obj = new Object[length];
+                //Uz pomoc for petlje prolazimo kroz polja jednog objekta i
+                //Upisujemo u obj po redosledu pojavljivanja
+                for(int i=0;i<length;i++){
+                    obj[i] = rs.getObject(i+1);
+                }
+                returnList.add(entity.createInstance(obj));
+            }
+            //U svakoj klasi koji implementira interfejs GenericEntity imamo
+            //metod createInstance
+            return returnList;
+        } catch (SQLException ex) {
+            throw ex;
+        }
     }
 
 }

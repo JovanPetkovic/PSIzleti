@@ -11,11 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
+import Domain.Agency;
 import Domain.Student;
 import Domain.Teacher;
 import Domain.Trip;
 import Domain.TripStudent;
 import Domain.TripTeacher;
+import javax.swing.JFrame;
 
 /**
  *
@@ -25,21 +27,15 @@ public class FrmAllTrip extends javax.swing.JFrame {
 
     
     List<Trip> tripList;
-    List<TripTeacher> tripTeacherList;
-    List<TripStudent> tripStudentList;
-    List<Teacher> teacherList;
-    List<Student> studentList;
-    List<Student> selectedStudents;
-    List<Teacher> selectedTeachers;
-    List<Student> restStudents;
-    List<Teacher> restTeachers;
     
     /**
      * Creates new form FrmAllTrip
      */
     public FrmAllTrip() {
         initComponents();
-        refreshData();
+        fillTripTable();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
     }
 
     /**
@@ -53,19 +49,14 @@ public class FrmAllTrip extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tripTable = new javax.swing.JTable();
-        changeButton = new javax.swing.JButton();
-        backButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        teacherTable = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        studentTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tripTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Destnacija", "Pocetak", "Kraj","Cena"
+                "Destnacija", "Pocetak", "Kraj"
             }
         ));
         tripTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -75,72 +66,34 @@ public class FrmAllTrip extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tripTable);
 
-        changeButton.setText("Izmeni");
-        changeButton.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Učitaj");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeButtonActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
-
-        backButton.setText("Nazad");
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backButtonActionPerformed(evt);
-            }
-        });
-
-        teacherTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {},
-            new String [] {
-                "ID", "Ime", "Prezime"
-            }
-        ));
-        jScrollPane2.setViewportView(teacherTable);
-
-        studentTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {},
-            new String [] {
-                "ID", "Ime", "Prezime", "Razred"
-            }
-        ));
-        jScrollPane3.setViewportView(studentTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(changeButton)
-                        .addGap(88, 88, 88)
-                        .addComponent(backButton)
-                        .addGap(0, 87, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(159, 159, 159)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(changeButton)
-                    .addComponent(backButton))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addComponent(jButton1)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         pack();
@@ -148,20 +101,18 @@ public class FrmAllTrip extends javax.swing.JFrame {
 
     private void tripTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tripTableMouseClicked
         long tripID = tripList.get(tripTable.getSelectedRow()).getId();
-        fillTeacherTable(tripID);
-        fillStudentTable(tripID);
     }//GEN-LAST:event_tripTableMouseClicked
 
-    private void changeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeButtonActionPerformed
-        Trip selectedTrip = tripList.get(tripTable.getSelectedRow());
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Trip trip;
+        try {
+            trip = Communication.getInstance().getTrip(tripList.get(tripTable.getSelectedRow()));
+            (new FrmChangeTrip(trip)).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAllTrip.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        FrmChangeTrip fct = new FrmChangeTrip(selectedTrip,selectedStudents,selectedTeachers,restStudents,restTeachers);
-        fct.setVisible(true);
-    }//GEN-LAST:event_changeButtonActionPerformed
-
-    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_backButtonActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,13 +151,8 @@ public class FrmAllTrip extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton backButton;
-    private javax.swing.JButton changeButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable studentTable;
-    private javax.swing.JTable teacherTable;
     private javax.swing.JTable tripTable;
     // End of variables declaration//GEN-END:variables
 
@@ -214,16 +160,9 @@ public class FrmAllTrip extends javax.swing.JFrame {
         try {
             initData();
             DefaultTableModel dtm = (DefaultTableModel) tripTable.getModel();
-            int rowSelected = tripTable.getSelectedRow();
             clearTable(dtm);
             for(Trip trip:tripList){
-                dtm.addRow(new Object[]{trip.getId(),trip.getDestination(),trip.getStartDateString(),trip.getEndDateString(),trip.getPrice()});
-            }
-            if(rowSelected!=-1){
-                tripTable.setRowSelectionInterval(rowSelected, rowSelected);
-                long tripID = tripList.get(tripTable.getSelectedRow()).getId();
-                fillTeacherTable(tripID);
-                fillStudentTable(tripID);
+                dtm.addRow(new Object[]{trip.getDestination(),trip.getStartDateString(),trip.getEndDateString()});
             }
             
         } catch (Exception ex) {
@@ -233,57 +172,9 @@ public class FrmAllTrip extends javax.swing.JFrame {
 
     private void initData() {
         try {
-            tripList = Communication.getInstance().getAllTrips();
-            tripTeacherList = Communication.getInstance().getAllTripTeacher();
-            tripStudentList = Communication.getInstance().getAllTripStudent();
-            teacherList = Communication.getInstance().getAllTeachers();
-            studentList = Communication.getInstance().getAllStudents();            
+            tripList = Communication.getInstance().getAllTrips();          
         } catch (Exception ex) {
             Logger.getLogger(FrmAllTrip.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void fillTeacherTable(long tripID) {
-        DefaultTableModel dtm = (DefaultTableModel) teacherTable.getModel();
-        clearTable(dtm);
-        selectedTeachers = new ArrayList<>();
-        restTeachers = new ArrayList<>();
-        List<Long> teacherIDs = new ArrayList<>();
-        for(TripTeacher tt:tripTeacherList){
-            if(tt.getTripID() == tripID){
-                teacherIDs.add(tt.getTeacherID());
-            }
-        }
-        for(Teacher teacher:teacherList){
-            if(teacherIDs.contains(teacher.getId())){
-                selectedTeachers.add(teacher);
-                dtm.addRow(new Object[]{teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
-            }
-            else{
-                restTeachers.add(teacher);
-            }
-        }
-    }
-
-    private void fillStudentTable(long tripID) {
-        DefaultTableModel dtm = (DefaultTableModel) studentTable.getModel();
-        clearTable(dtm);
-        selectedStudents = new ArrayList<>();
-        restStudents = new ArrayList<>();
-        List<Long> studentIDs = new ArrayList<>();
-        for(TripStudent ts:tripStudentList){
-            if(ts.getTripID() == tripID){
-                studentIDs.add(ts.getStudentID());
-            }
-        }
-        for(Student student:studentList){
-            if(studentIDs.contains(student.getId())){
-                selectedStudents.add(student);
-                dtm.addRow(new Object[]{student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
-            }
-            else{
-                restStudents.add(student);
-            }
         }
     }
 
@@ -293,30 +184,4 @@ public class FrmAllTrip extends javax.swing.JFrame {
             dtm.removeRow(0);
     }
 
-    private void refreshData() {
-        RefreshThread rfThread = new RefreshThread(this);
-        rfThread.start();
-    }
-    
-    private class RefreshThread extends Thread{
-        
-        private FrmAllTrip tripForm;
-        
-        public RefreshThread(FrmAllTrip fat){
-            tripForm = fat;
-        }
-        
-        @Override
-        public void run(){
-            for(int i=1;i>0;i++){
-                try {
-                    tripForm.fillTripTable(); 
-                    sleep(5000);           
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(FrmAllTrip.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
-    }
 }

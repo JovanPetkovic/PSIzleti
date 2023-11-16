@@ -82,5 +82,15 @@ public class TripTeacher implements GenericEntity {
     public String getParametersForDelete() {
         return "trip_id = " + this.tripID + " AND " + "teacher_id = " + this.teacherID;
     }
+
+    @Override
+    public GenericEntity createDetailedInstance(Object[] obj) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getParametersForSearch() {
+        return "trip_id=" + this.tripID;
+    }
     
 }

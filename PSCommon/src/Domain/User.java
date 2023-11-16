@@ -139,5 +139,15 @@ public class User implements GenericEntity{
     public User createInstance(Object[] obj) {
         return new User(Long.valueOf(obj[0].toString()),obj[1].toString(),obj[2].toString(),obj[3].toString(),obj[4].toString());
     }
+
+    @Override
+    public GenericEntity createDetailedInstance(Object[] obj) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public String getParametersForSearch() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
      
 }

@@ -13,11 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
+import Domain.Agency;
 import Domain.Student;
 import Domain.Teacher;
 import Domain.Trip;
 import Domain.TripStudent;
 import Domain.TripTeacher;
+import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,15 +33,21 @@ public class FrmAddTrip extends javax.swing.JFrame {
     List<Student> studentList;
     FrmAddTripTeacher tripTeacherForm;
     FrmAddTripStudent tripStudentForm;
-    long tripID;
+    List<Agency> agencyList;
+    
+    Trip trip;
     
     /**
      * Creates new form FrmAddTrip
      */
     public FrmAddTrip() {
+        trip = new Trip();
+        teacherList = new ArrayList<>();
+        studentList = new ArrayList<>();
         initComponents();
+        initAgencyData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initializeForms();
-        tripID = 0;
     }
 
     /**
@@ -70,6 +79,8 @@ public class FrmAddTrip extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         idField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        agencyField = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,7 +95,7 @@ public class FrmAddTrip extends javax.swing.JFrame {
         teacherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane1.setViewportView(teacherTable);
@@ -101,19 +112,19 @@ public class FrmAddTrip extends javax.swing.JFrame {
         studentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime", "Razred"
+                "Prezime", "Razred"
             }
         ));
         jScrollPane2.setViewportView(studentTable);
 
-        addStudentButton.setText("Dodaj ucenika");
+        addStudentButton.setText("Dodaj učenika");
         addStudentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addStudentButtonActionPerformed(evt);
             }
         });
 
-        removeStudentButton.setText("Izbaci ucenika");
+        removeStudentButton.setText("Izbaci učenika");
 
         saveButton.setText("Zapamti izlet");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -131,70 +142,89 @@ public class FrmAddTrip extends javax.swing.JFrame {
             }
         });
 
+        agencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel6.setText("Agencija:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addStudentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(removeStudentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addComponent(addTeacherButton)
-                        .addGap(35, 35, 35)
-                        .addComponent(removeTeacherButton))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(29, 29, 29)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(jLabel1)
-                                                .addGap(43, 43, 43))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel2)
-                                                .addGap(19, 19, 19)))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel3)
-                                                .addComponent(jLabel4)
-                                                .addComponent(jLabel5))
-                                            .addGap(36, 36, 36)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(startDateField)
-                                        .addComponent(destinationField)
-                                        .addComponent(endDateField)
-                                        .addComponent(priceField, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                                        .addComponent(idField, javax.swing.GroupLayout.Alignment.LEADING))))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel1))
+                                .addGap(36, 36, 36)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(destinationField)
+                                    .addComponent(endDateField)
+                                    .addComponent(priceField)
+                                    .addComponent(idField, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(agencyField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(34, 34, 34)
+                                .addComponent(startDateField))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addStudentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
+                        .addGap(60, 60, 60)
+                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(removeStudentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(addTeacherButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addComponent(removeTeacherButton)
+                        .addGap(11, 11, 11))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(idField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addTeacherButton)
+                    .addComponent(removeTeacherButton))
+                .addGap(9, 9, 9)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(destinationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addStudentButton)
+                    .addComponent(removeStudentButton))
+                .addContainerGap(32, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(idField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(startDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(destinationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -203,39 +233,28 @@ public class FrmAddTrip extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(agencyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addTeacherButton)
-                    .addComponent(removeTeacherButton))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addStudentButton)
-                    .addComponent(removeStudentButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
                     .addComponent(jButton1))
-                .addContainerGap())
+                .addGap(58, 58, 58))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-
-        saveTripBase();
+        gatherAndSetTripData();
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
+            Communication.getInstance().addTrip(trip);
+        } catch (Exception ex) {
             Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
         }
-        saveTripTeachers();
-        saveTripStudents();
-        JOptionPane.showMessageDialog(this, "Trip Successfully Added");
+        JOptionPane.showMessageDialog(this, "Sistem je zapamtio izlet.");
         this.dispose();
     }//GEN-LAST:event_saveButtonActionPerformed
 
@@ -290,6 +309,7 @@ public class FrmAddTrip extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addStudentButton;
     private javax.swing.JButton addTeacherButton;
+    private javax.swing.JComboBox<String> agencyField;
     private javax.swing.JTextField destinationField;
     private javax.swing.JTextField endDateField;
     private javax.swing.JTextField idField;
@@ -299,6 +319,7 @@ public class FrmAddTrip extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField priceField;
@@ -309,52 +330,30 @@ public class FrmAddTrip extends javax.swing.JFrame {
     private javax.swing.JTable studentTable;
     private javax.swing.JTable teacherTable;
     // End of variables declaration//GEN-END:variables
-
-    private void saveTripBase() {
-        Trip trip = new Trip();
-        trip.setId(Long.parseLong(idField.getText()));
-        tripID = trip.getId();
-        trip.setDestination(destinationField.getText());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+   
+    private void gatherAndSetTripData(){
+        //Gathering Data
+        
         Date startDate = null;
         Date endDate = null;
         try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             startDate = dateFormat.parse(startDateField.getText());
             endDate = dateFormat.parse(endDateField.getText());
         } catch (ParseException ex) {
             Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Long price = Long.parseLong(priceField.getText());
+        
+        //Setting values of trip fields
+        
+        trip.setId(Long.valueOf(idField.getText()));
+        trip.setDestination(destinationField.getText());
         trip.setStartDate(startDate);
         trip.setEndDate(endDate);
-        trip.setPrice(price);
-        try {
-            Communication.getInstance().addTrip(trip);
-        } catch (Exception ex) {
-            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void saveTripTeachers() {
-        for(Teacher teacher:teacherList){
-            TripTeacher tt = new TripTeacher(tripID,teacher.getId());
-            try {
-                Communication.getInstance().addTripTeacher(tt);
-            } catch (Exception ex) {
-                Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private void saveTripStudents() {
-        for(Student student:studentList){
-            TripStudent ts = new TripStudent(tripID,student.getId());
-            try {
-                Communication.getInstance().addTripStudent(ts);
-            } catch (Exception ex) {
-                Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        trip.setPrice(Long.valueOf(priceField.getText()));
+        trip.setAgency(agencyList.get(agencyField.getSelectedIndex()));
+        trip.setStudentList(studentList);
+        trip.setTeacherList(teacherList);
     }
 
     private void initializeForms() {
@@ -365,16 +364,36 @@ public class FrmAddTrip extends javax.swing.JFrame {
     void saveTeachers(List<Teacher> selectedTeachers) {
         teacherList = selectedTeachers;
         DefaultTableModel dtm = (DefaultTableModel) teacherTable.getModel();
+        clearTable(dtm);
         for(Teacher teacher:teacherList){
-            dtm.addRow(new Object[]{teacher.getId(),teacher.getFirstName(),teacher.getLastName()});
+            dtm.addRow(new Object[]{teacher.getFirstName(),teacher.getLastName()});
         }
     }
 
     void saveStudents(List<Student> selectedStudents) {
         studentList = selectedStudents;
         DefaultTableModel dtm = (DefaultTableModel) studentTable.getModel();
+        clearTable(dtm);
         for(Student student:studentList){
-            dtm.addRow(new Object[]{student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+            dtm.addRow(new Object[]{student.getFirstName(),student.getLastName()});
+        }
+    }
+    
+    private void clearTable(DefaultTableModel table){
+        int tableRowCount = table.getRowCount();
+        for(int i = 0;i<tableRowCount;i++){
+            table.removeRow(0);
+        }
+    }
+
+    private void initAgencyData() {
+        try {
+            agencyList = Communication.getInstance().getAllAgencies();
+            for(Agency school:agencyList){
+                agencyField.addItem(school.getName());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FrmAddTrip.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

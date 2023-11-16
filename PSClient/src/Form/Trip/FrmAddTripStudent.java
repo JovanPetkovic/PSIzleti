@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import Communication.Communication;
 import Domain.Student;
+import javax.swing.JFrame;
 
 /**
  *
@@ -28,10 +29,12 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
      */
     public FrmAddTripStudent() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
     public FrmAddTripStudent(FrmAddTrip frm) {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addTrip = frm;
         changeTrip = null;
         selectedStudents = new ArrayList<>();
@@ -40,10 +43,10 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
     
     public FrmAddTripStudent(FrmChangeTrip frm,List<Student> students) {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         changeTrip = frm;
         addTrip = null;
-        selectedStudents = new ArrayList<>();
-        selectedStudents.addAll(students);
+        selectedStudents = students;
         fillStudentTable();
     }
 
@@ -70,7 +73,7 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
         selectedStudentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime", "Razred"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane1.setViewportView(selectedStudentTable);
@@ -92,7 +95,7 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
         allStudentTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "ID", "Ime", "Prezime", "Razred"
+                "Ime", "Prezime"
             }
         ));
         jScrollPane2.setViewportView(allStudentTable);
@@ -167,7 +170,7 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
         allStudents.remove(allStudentTable.getSelectedRow());
         DefaultTableModel dtm;
         dtm = (DefaultTableModel) selectedStudentTable.getModel();
-        dtm.addRow(new Object[] {student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+        dtm.addRow(new Object[] {student.getFirstName(),student.getLastName()});
         dtm = (DefaultTableModel) allStudentTable.getModel();
         dtm.removeRow(allStudentTable.getSelectedRow());
     }//GEN-LAST:event_addButtonActionPerformed
@@ -178,7 +181,7 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
         selectedStudents.remove(selectedStudentTable.getSelectedRow());
         DefaultTableModel dtm;
         dtm = (DefaultTableModel) allStudentTable.getModel();
-        dtm.addRow(new Object[] {student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+        dtm.addRow(new Object[] {student.getFirstName(),student.getLastName()});
         dtm = (DefaultTableModel) selectedStudentTable.getModel();
         dtm.removeRow(selectedStudentTable.getSelectedRow());
     }//GEN-LAST:event_removeButtonActionPerformed
@@ -190,9 +193,11 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if(addTrip!=null){
             addTrip.saveStudents(selectedStudents);
+            this.dispose();
         }
         else{
             changeTrip.saveStudents(selectedStudents);
+            this.dispose();
         }
         
         this.setVisible(false);
@@ -256,11 +261,10 @@ public class FrmAddTripStudent extends javax.swing.JFrame {
             dummyStudents.addAll(allStudents);
             for(Student student:dummyStudents){
                 if(!selectedStudents.contains( student)){
-                    System.out.println(student.toString());
-                    dtm.addRow(new Object[] {student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+                    dtm.addRow(new Object[] {student.getFirstName(),student.getLastName()});
                 }
                 else{
-                    dtm2.addRow(new Object[] {student.getId(),student.getFirstName(),student.getLastName(),student.getGrade()});
+                    dtm2.addRow(new Object[] {student.getFirstName(),student.getLastName()});
                     allStudents.remove(student);
                 }
             }
